@@ -3,6 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ForkliftsStore } from '../forklifts.store';
 import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
 
@@ -14,27 +15,13 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
     MatIconModule,
     MatCardModule,
     MatTableModule,
+    MatTooltipModule,
   ],
   host: {
     class: 'downtimes-sidebar',
   },
   template: `
     <mat-card class="sidebar-card">
-      <mat-card-header>
-        <mat-card-title class="sidebar-title">
-          {{ sidebarTitle() }}
-        </mat-card-title>
-        <button
-          mat-button
-          color="primary"
-          (click)="addDowntime()"
-          [disabled]="!selectedForklift()"
-          [attr.aria-label]="'Добавить простой для погрузчика ' + selectedForklift()?.number"
-        >
-          <mat-icon>add</mat-icon>
-          Добавить
-        </button>
-      </mat-card-header>
       <mat-card-content class="sidebar-content">
         @if (selectedForklift()) {
           <table mat-table class="downtimes-table">
@@ -98,6 +85,7 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
                   mat-button
                   [disabled]="true"
                   [attr.aria-label]="'Редактировать простой'"
+                  matTooltip="Редактировать"
                 >
                   <mat-icon>edit</mat-icon>
                 </button>
@@ -106,6 +94,7 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
                   color="warn"
                   [disabled]="true"
                   [attr.aria-label]="'Удалить простой'"
+                  matTooltip="Удалить"
                 >
                   <mat-icon>delete</mat-icon>
                 </button>

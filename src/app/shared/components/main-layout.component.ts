@@ -55,17 +55,16 @@ import { SidenavComponent } from './sidenav.component';
     }
 
     .sidebar-fixed {
-      width: 250px;
+      width: 180px;
       flex-shrink: 0;
       overflow-y: auto;
-      border-right: 1px solid #e0e0e0;
       background-color: #f5f5f5;
     }
 
     .page-content {
       flex: 1;
       overflow-y: auto;
-      padding: 2rem;
+      padding: 1rem;
       background-color: white;
     }
 

@@ -36,35 +36,55 @@ interface MenuItem {
       display: flex;
       flex-direction: column;
       height: 100%;
-      background-color: #f5f5f5;
-      border-right: 1px solid #e0e0e0;
+      background-color: white;
     }
 
     .sidenav-nav {
       flex: 1;
-      padding: 1rem 0;
+      margin: 1rem 0 1rem .5rem;
+      background-color: #EDEDED;
+      border-radius: 20px;
+      border-right: 1px solid #e0e0e0;
     }
 
     .sidenav-item {
       padding: 0.75rem 1.5rem;
       font-size: 0.95rem;
       color: #333;
+      font-weight: 700;
       transition: background-color 0.2s ease;
       cursor: pointer;
+      line-height: 1.4;
+    }
+
+    ::ng-deep .sidenav-item {
+      white-space: normal !important;
+      overflow-wrap: break-word !important;
+      word-break: break-word !important;
+      max-width: 100%;
+    }
+
+    ::ng-deep .sidenav-item .mdc-list-item__primary-text {
+      white-space: normal !important;
+      overflow-wrap: break-word !important;
+      word-break: break-word !important;
+    }
+
+    ::ng-deep .mdc-list-item.mdc-list-item--with-one-line {
+      height: auto !important;
     }
 
     .sidenav-item:hover {
-      background-color: #e8e8e8;
+      background-color: #d8d8d8;
     }
 
     .sidenav-item.active {
-      background-color: #1976d2;
-      color: white;
-      font-weight: 500;
+      color: #CB0000;
+      font-weight: 700;
     }
 
     .sidenav-item.active:hover {
-      background-color: #1565c0;
+      background-color: #d8d8d8;
     }
   `,
 })

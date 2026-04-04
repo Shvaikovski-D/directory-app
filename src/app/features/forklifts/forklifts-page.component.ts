@@ -43,7 +43,7 @@ import { ForkliftsStore } from './forklifts.store';
           />
           <button
             mat-button
-            color="primary"
+            class="search-button"
             (click)="applySearch()"
             [disabled]="!searchNumber.trim()"
             [attr.aria-label]="'Искать погрузчики'"
@@ -57,46 +57,44 @@ import { ForkliftsStore } from './forklifts.store';
             [disabled]="!searchNumber.trim()"
             [attr.aria-label]="'Сбросить фильтр'"
           >
-            <mat-icon>refresh</mat-icon>
+            <mat-icon>clear</mat-icon>
             Сбросить
           </button>
         </div>
       </section>
 
+      <div class="section-header">
+        <button
+          mat-button
+          class="add-button"
+          (click)="addForklift()"
+          [disabled]="store.isEditing()"
+          [attr.aria-label]="'Добавить новый погрузчик'"
+        >
+          Добавить
+        </button>
+      </div>
+
       <!-- Две секции: Погрузчики и Простои -->
       <div class="sections-container">
         <!-- Секция Погрузчики -->
         <section class="section-forklifts" aria-label="Погрузчики">
-          <div class="section-header">
-            <h3 class="section-title">Погрузчики</h3>
-            <button
-              mat-button
-              color="primary"
-              (click)="addForklift()"
-              [disabled]="store.isEditing()"
-              [attr.aria-label]="'Добавить новый погрузчик'"
-            >
-              <mat-icon>add</mat-icon>
-              Добавить новый погрузчик
-            </button>
-          </div>
-          <div class="section-content">
+          <div class="section-content" style="display: flex; gap: 1.5rem;">
             <app-forklifts-table></app-forklifts-table>
           </div>
         </section>
 
         <!-- Секция Простои -->
         <section class="section-downtimes" aria-label="Простои">
-          <div class="section-header">
+          <div class="section-header in-column">
             <h3 class="section-title">
-              Простои по погрузчику {{ selectedForkliftNumber() }}
+              <strong>Простои по погрузчику</strong> {{ selectedForkliftNumber() }}
             </h3>
             <button
               mat-button
-              color="primary"
+              class="add-downtime-button"
               [attr.aria-label]="'Добавить новый простой'"
             >
-              <mat-icon>add</mat-icon>
               Добавить
             </button>
           </div>
@@ -116,7 +114,10 @@ import { ForkliftsStore } from './forklifts.store';
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 0.5rem;
+      background-color: #ededed;
+      border-radius: 20px;
+      padding: 1rem;
     }
 
     .page-section-title {
@@ -128,7 +129,7 @@ import { ForkliftsStore } from './forklifts.store';
 
     .filters-panel {
       padding: 1rem;
-      background-color: #f9f9f9;
+      background-color: #ededed;
       border-radius: 8px;
       border: 1px solid #e0e0e0;
     }
@@ -179,8 +180,14 @@ import { ForkliftsStore } from './forklifts.store';
       justify-content: space-between;
       align-items: center;
       padding: 1rem 1.5rem;
-      background-color: #f5f5f5;
+      background-color: #ededed;
       border-bottom: 1px solid #e0e0e0;
+
+      &.in-column {
+        flex-direction: column;
+        gap: 15px;
+        align-items: start;
+      }
     }
 
     .section-title {
@@ -210,6 +217,26 @@ import { ForkliftsStore } from './forklifts.store';
 
     button[mat-button][disabled] {
       opacity: 0.5;
+    }
+
+    .search-button,
+    .add-button,
+    .add-downtime-button {
+      background-color: #cb0000 !important;
+      color: #f8e0e0 !important;
+      border-radius: 20px !important;
+    }
+
+    .search-button:hover:not([disabled]),
+    .add-button:hover:not([disabled]),
+    .add-downtime-button:hover:not([disabled]) {
+      background-color: #a30000 !important;
+    }
+
+    .search-button:active:not([disabled]),
+    .add-button:active:not([disabled]),
+    .add-downtime-button:active:not([disabled]) {
+      background-color: #800000 !important;
     }
 
     @media (max-width: 1400px) {

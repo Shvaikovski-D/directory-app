@@ -19,9 +19,8 @@ import { AuthService } from '../../core/services/auth.service';
   },
   template: `
     <div class="header-content">
-      <h1 class="header-title">{{ title }}</h1>
+      <h1 class="header-title"></h1>
       <button mat-button class="profile-button" [mat-menu-trigger-for]="profileMenu">
-        <mat-icon>account_circle</mat-icon>
         Профиль
       </button>
       <mat-menu #profileMenu="matMenu" xPosition="before">
@@ -37,28 +36,32 @@ import { AuthService } from '../../core/services/auth.service';
       display: block;
       width: 100%;
       background-color: white;
-      border-bottom: 1px solid #e0e0e0;
+      padding: .5rem 1.75rem .5rem .5rem;
     }
 
     .header-content {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1rem 2rem;
+      padding: 1rem 2.5rem;
       min-height: 64px;
+      background-color: #CB0000;
+      border-radius: 20px;
     }
 
     .header-title {
       margin: 0;
       font-size: 1.5rem;
       font-weight: 500;
-      color: #1976d2;
+      color: white;
     }
 
     .profile-button {
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      background-color: #F8E0E0;
+      border-radius: 20px !important;
     }
 
     .profile-button mat-icon {

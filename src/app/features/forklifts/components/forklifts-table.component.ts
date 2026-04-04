@@ -6,6 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import {
   FormBuilder,
   FormControl,
@@ -27,6 +28,7 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
     MatFormFieldModule,
     MatInputModule,
     MatCheckboxModule,
+    MatTooltipModule,
     ReactiveFormsModule,
   ],
   host: {
@@ -200,35 +202,35 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
                 (click)="saveRow()"
                 [disabled]="!isFormValid(element.id)"
                 [attr.aria-label]="'Сохранить погрузчик ' + element.id"
+                matTooltip="Сохранить"
               >
                 <mat-icon>save</mat-icon>
-                Сохранить
               </button>
               <button
                 mat-button
                 (click)="cancelEdit()"
                 [attr.aria-label]="'Отменить редактирование погрузчика ' + element.id"
+                matTooltip="Отменить"
               >
                 <mat-icon>close</mat-icon>
-                Отменить
               </button>
             } @else {
               <button
                 mat-button
                 (click)="editRow(element.id)"
                 [attr.aria-label]="'Изменить погрузчик ' + element.id"
+                matTooltip="Изменить"
               >
                 <mat-icon>edit</mat-icon>
-                Изменить
               </button>
               <button
                 mat-button
                 color="warn"
                 (click)="deleteRow(element.id)"
                 [attr.aria-label]="'Удалить погрузчик ' + element.id"
+                matTooltip="Удалить"
               >
-                <mat-icon>delete</mat-icon>
-                Удалить
+                <mat-icon>clear</mat-icon>
               </button>
             }
           </td>
@@ -413,7 +415,7 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
       font-size: 1.2rem;
       width: 1.2rem;
       height: 1.2rem;
-      margin-right: 0.25rem;
+      margin-right: 0;
       vertical-align: middle;
     }
 
