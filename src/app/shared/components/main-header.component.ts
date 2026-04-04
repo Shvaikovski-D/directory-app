@@ -1,6 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-main-header',
@@ -8,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [
     MatButtonModule,
     MatIconModule,
+    MatMenuModule,
   ],
   host: {
     class: 'main-header',
@@ -15,10 +20,16 @@ import { MatIconModule } from '@angular/material/icon';
   template: `
     <div class="header-content">
       <h1 class="header-title">{{ title }}</h1>
-      <button mat-button class="profile-button" (click)="onProfileClick()">
+      <button mat-button class="profile-button" [mat-menu-trigger-for]="profileMenu">
         <mat-icon>account_circle</mat-icon>
         Профиль
       </button>
+      <mat-menu #profileMenu="matMenu" xPosition="before">
+        <button mat-menu-item (click)="onLogoutClick()">
+          <mat-icon>logout</mat-icon>
+          Выйти
+        </button>
+      </mat-menu>
     </div>
   `,
   styles: `
@@ -77,10 +88,26 @@ import { MatIconModule } from '@angular/material/icon';
   `,
 })
 export class MainHeaderComponent {
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly snackBar = inject(MatSnackBar);
+
   readonly title = 'АИС ОГПА';
 
-  onProfileClick(): void {
-    console.log('Профиль clicked');
-    // TODO: Реализовать функционал профиля
+  onLogoutClick(): void {
+    this.authService.logout().subscribe({
+      next: () => {
+        this.snackBar.open('Вы вышли из системы', 'Закрыть', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
+        void this.router.navigate(['/login']);
+      },
+      error: () => {
+        // Ошибка игнорируется, так как мы всё равно перенаправляем на login
+        void this.router.navigate(['/login']);
+      },
+    });
   }
 }
