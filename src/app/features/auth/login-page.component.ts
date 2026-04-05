@@ -87,12 +87,12 @@ import { HttpErrorResponse } from '@angular/common/http';
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, var(--md-sys-color-primary) 0%, var(--md-sys-color-tertiary) 100%);
       padding: 1rem;
     }
 
     .login-card {
-      background: white;
+      background: var(--md-sys-color-surface);
       padding: 2.5rem;
       border-radius: 8px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -103,7 +103,7 @@ import { HttpErrorResponse } from '@angular/common/http';
     .login-title {
       font-size: 1.75rem;
       font-weight: 500;
-      color: #333;
+      color: var(--md-sys-color-on-surface);
       margin: 0 0 2rem 0;
       text-align: center;
     }

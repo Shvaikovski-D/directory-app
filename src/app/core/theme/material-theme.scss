@@ -1,0 +1,135 @@
+@use '@angular/material' as mat;
+
+// Кастомная цветовая палитра
+$my-custom-primary: mat.m2-define-palette((
+  50: #FFEBE6,
+  100: #FFCBC0,
+  200: #FFA796,
+  300: #FF836C,
+  400: #FF664C,
+  500: #B33B15,
+  600: #A23512,
+  700: #8F2D0E,
+  800: #7C260B,
+  900: #5F1806,
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #000000,
+    400: #000000,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+  )
+));
+
+$my-custom-accent: mat.m2-define-palette((
+  50: #FFEBE6,
+  100: #FFCBC0,
+  200: #FFA796,
+  300: #FF836C,
+  400: #FF664C,
+  500: #B33B15,
+  600: #A23512,
+  700: #8F2D0E,
+  800: #7C260B,
+  900: #5F1806,
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #000000,
+    400: #000000,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+  )
+));
+
+$my-custom-warn: mat.m2-define-palette((
+  50: #FFEBE9,
+  100: #FFCCC8,
+  200: #FFAAA4,
+  300: #FF8880,
+  400: #FF7066,
+  500: #FF5449,
+  600: #FF4D42,
+  700: #FF4239,
+  800: #FF3831,
+  900: #FF2820,
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #000000,
+    400: #000000,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+  )
+));
+
+// Определение темы M2 для совместимости
+$my-light-theme: mat.m2-define-light-theme((
+  color: (
+    primary: $my-custom-primary,
+    accent: $my-custom-accent,
+    warn: $my-custom-warn,
+  ),
+  density: 0,
+));
+
+// Применение темы
+:root {
+  @include mat.all-component-themes($my-light-theme);
+  @include mat.core-theme($my-light-theme);
+}
+
+// Дополнительные CSS переменные для удобного использования
+:root {
+  --md-sys-color-primary: #B33B15;
+  --md-sys-color-on-primary: #FFFFFF;
+  --md-sys-color-primary-container: #FFDBC7;
+  --md-sys-color-on-primary-container: #3E0E00;
+  
+  --md-sys-color-secondary: #B88576;
+  --md-sys-color-on-secondary: #FFFFFF;
+  --md-sys-color-secondary-container: #FFDAD0;
+  --md-sys-color-on-secondary-container: #462A22;
+  
+  --md-sys-color-tertiary: #A58F44;
+  --md-sys-color-on-tertiary: #FFFFFF;
+  --md-sys-color-tertiary-container: #ECD599;
+  --md-sys-color-on-tertiary-container: #332800;
+  
+  --md-sys-color-error: #FF5449;
+  --md-sys-color-on-error: #FFFFFF;
+  --md-sys-color-error-container: #FFDAD6;
+  --md-sys-color-on-error-container: #410002;
+  
+  --md-sys-color-background: #FFFFFF;
+  --md-sys-color-on-background: #998E8C;
+  
+  --md-sys-color-surface: #FFFFFF;
+  --md-sys-color-on-surface: #998E8C;
+  
+  --md-sys-color-outline: #A08C87;
+  --md-sys-color-outline-variant: #D8C8C4;
+  
+  --md-sys-color-surface-container: #F5F5F5;
+  --md-sys-color-surface-container-low: #FFFFFF;
+  --md-sys-color-surface-container-high: #F0ECEB;
+  --md-sys-color-on-surface-variant: #998E8C;
+  
+  --md-sys-color-secondary-container-high: #FFDBC7;
+  
+  --md-sys-color-error-container: #FFDAD6;
+  --md-sys-color-on-error-container: #410002;
+}

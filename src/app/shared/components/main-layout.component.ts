@@ -51,21 +51,21 @@ import { SidenavComponent } from './sidenav.component';
       display: flex;
       flex: 1;
       overflow: hidden;
-      background-color: #fafafa;
+      background-color: var(--md-sys-color-surface-container-low);
     }
 
     .sidebar-fixed {
       width: 180px;
       flex-shrink: 0;
       overflow-y: auto;
-      background-color: #f5f5f5;
+      background-color: var(--md-sys-color-surface-container);
     }
 
     .page-content {
       flex: 1;
       overflow-y: auto;
       padding: 1rem;
-      background-color: white;
+      background-color: var(--md-sys-color-surface);
     }
 
     @media (max-width: 1024px) {
@@ -87,7 +87,7 @@ import { SidenavComponent } from './sidenav.component';
       .sidebar-fixed {
         width: 100%;
         border-right: none;
-        border-bottom: 1px solid #e0e0e0;
+        border-bottom: 1px solid var(--md-sys-color-outline-variant);
         max-height: 200px;
       }
 

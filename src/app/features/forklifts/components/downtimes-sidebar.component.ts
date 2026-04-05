@@ -144,7 +144,7 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
     .sidebar-title {
       font-size: 1.1rem;
       font-weight: 500;
-      color: #1976d2;
+      color: var(--md-sys-color-primary);
     }
 
     .sidebar-content {
@@ -159,7 +159,7 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
     }
 
     .header-row {
-      background-color: #f5f5f5;
+      background-color: var(--md-sys-color-surface-container-high);
       font-weight: 500;
     }
 
@@ -197,14 +197,14 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
       align-items: center;
       justify-content: center;
       height: 100%;
-      color: #666;
+      color: var(--md-sys-color-on-surface-variant);
       text-align: center;
       padding: 2rem;
     }
 
     .no-selection-icon {
       font-size: 3rem;
-      color: #bdbdbd;
+      color: var(--md-sys-color-outline);
       margin-bottom: 1rem;
     }
 

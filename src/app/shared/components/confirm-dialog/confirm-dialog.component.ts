@@ -36,7 +36,7 @@ export interface ConfirmDialogData {
     p {
       margin: 1rem 0;
       font-size: 1rem;
-      color: #333;
+      color: var(--md-sys-color-on-surface);
     }
   `,
 })

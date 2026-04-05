@@ -35,7 +35,7 @@ import { AuthService } from '../../core/services/auth.service';
     :host {
       display: block;
       width: 100%;
-      background-color: white;
+      background-color: var(--md-sys-color-surface);
       padding: .5rem 1.75rem .5rem .5rem;
     }
 
@@ -45,7 +45,7 @@ import { AuthService } from '../../core/services/auth.service';
       align-items: center;
       padding: 1rem 2.5rem;
       min-height: 64px;
-      background-color: #CB0000;
+      background-color: var(--md-sys-color-primary);
       border-radius: 20px;
     }
 
@@ -53,14 +53,14 @@ import { AuthService } from '../../core/services/auth.service';
       margin: 0;
       font-size: 1.5rem;
       font-weight: 500;
-      color: white;
+      color: var(--md-sys-color-on-primary);
     }
 
     .profile-button {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      background-color: #F8E0E0;
+      background-color: var(--md-sys-color-primary-container);
       border-radius: 20px !important;
     }
 

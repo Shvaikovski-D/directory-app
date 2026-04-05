@@ -162,7 +162,7 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
               }
             } @else {
               @if (element.isActive) {
-                <mat-icon class="active-icon">check_circle</mat-icon>
+                <mat-icon class="active-icon">check</mat-icon>
               } @else {
                 <mat-icon class="inactive-icon">cancel</mat-icon>
               }
@@ -270,7 +270,7 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
 
     .table-container {
       position: relative;
-      background: white;
+      background: var(--md-sys-color-surface);
       border-radius: 4px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       overflow: hidden;
@@ -287,15 +287,15 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
       align-items: center;
       justify-content: center;
       font-size: 1.1rem;
-      color: #666;
+      color: var(--md-sys-color-on-surface-variant);
       z-index: 10;
     }
 
     .error-message {
       padding: 1rem;
-      background-color: #fee;
-      border-left: 4px solid #f44336;
-      color: #c62828;
+      background-color: var(--md-sys-color-error-container);
+      border-left: 4px solid var(--md-sys-color-error);
+      color: var(--md-sys-color-on-error-container);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -312,7 +312,7 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
     }
 
     .header-row {
-      background-color: #f5f5f5;
+      background-color: var(--md-sys-color-surface-container-high);
       font-weight: 500;
     }
 
@@ -323,19 +323,19 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
     }
 
     .data-row:hover {
-      background-color: #f5f5f5;
+      background-color: var(--md-sys-color-surface-container-high);
     }
 
     .data-row.selected {
-      background-color: #e3f2fd;
+      background-color: var(--md-sys-color-secondary-container);
     }
 
     .data-row.selected:hover {
-      background-color: #bbdefb;
+      background-color: var(--md-sys-color-secondary-container-high);
     }
 
     .data-row.editing {
-      background-color: #fff3e0;
+      background-color: var(--md-sys-color-tertiary-container);
     }
 
     .column-id {
@@ -386,21 +386,21 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
     }
 
     .active-icon {
-      color: #4caf50;
+      color: var(--md-sys-color-primary);
     }
 
     .inactive-icon {
-      color: #f44336;
+      color: var(--md-sys-color-error);
     }
 
     .required {
-      color: #f44336;
+      color: var(--md-sys-color-error);
     }
 
     .no-data {
       padding: 2rem;
       text-align: center;
-      color: #666;
+      color: var(--md-sys-color-on-surface-variant);
       font-size: 1rem;
     }
 

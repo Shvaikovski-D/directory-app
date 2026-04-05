@@ -115,7 +115,7 @@ import { ForkliftsStore } from './forklifts.store';
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
-      background-color: #ededed;
+      background-color: var(--md-sys-color-surface-container-high);
       border-radius: 20px;
       padding: 1rem;
     }
@@ -124,14 +124,13 @@ import { ForkliftsStore } from './forklifts.store';
       margin: 0;
       font-size: 1.75rem;
       font-weight: 500;
-      color: #1976d2;
     }
 
     .filters-panel {
       padding: 1rem;
-      background-color: #ededed;
+      background-color: var(--md-sys-color-surface-container-high);
       border-radius: 8px;
-      border: 1px solid #e0e0e0;
+      border: 1px solid var(--md-sys-color-outline-variant);
     }
 
     .filter-row {
@@ -143,7 +142,7 @@ import { ForkliftsStore } from './forklifts.store';
 
     .filter-label {
       font-weight: 500;
-      color: #333;
+      color: var(--md-sys-color-on-surface);
     }
 
     .filter-input {
@@ -161,9 +160,9 @@ import { ForkliftsStore } from './forklifts.store';
     .section-forklifts,
     .section-downtimes {
       flex: 1;
-      background-color: white;
+      background-color: var(--md-sys-color-surface-container);
       border-radius: 8px;
-      border: 1px solid #e0e0e0;
+      border: 1px solid var(--md-sys-color-outline-variant);
       overflow: hidden;
     }
 
@@ -180,8 +179,8 @@ import { ForkliftsStore } from './forklifts.store';
       justify-content: space-between;
       align-items: center;
       padding: 1rem 1.5rem;
-      background-color: #ededed;
-      border-bottom: 1px solid #e0e0e0;
+      background-color: var(--md-sys-color-surface-container-high);
+      border-bottom: 1px solid var(--md-sys-color-outline-variant);
 
       &.in-column {
         flex-direction: column;
@@ -194,7 +193,7 @@ import { ForkliftsStore } from './forklifts.store';
       margin: 0;
       font-size: 1.125rem;
       font-weight: 500;
-      color: #333;
+      color: var(--md-sys-color-on-surface);
     }
 
     .section-content {
@@ -222,21 +221,21 @@ import { ForkliftsStore } from './forklifts.store';
     .search-button,
     .add-button,
     .add-downtime-button {
-      background-color: #cb0000 !important;
-      color: #f8e0e0 !important;
+      background-color: var(--md-sys-color-primary) !important;
+      color: var(--md-sys-color-on-primary) !important;
       border-radius: 20px !important;
     }
 
     .search-button:hover:not([disabled]),
     .add-button:hover:not([disabled]),
     .add-downtime-button:hover:not([disabled]) {
-      background-color: #a30000 !important;
+      opacity: 0.9;
     }
 
     .search-button:active:not([disabled]),
     .add-button:active:not([disabled]),
     .add-downtime-button:active:not([disabled]) {
-      background-color: #800000 !important;
+      opacity: 0.8;
     }
 
     @media (max-width: 1400px) {
