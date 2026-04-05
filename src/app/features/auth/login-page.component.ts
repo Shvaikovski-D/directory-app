@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -68,10 +68,10 @@ import { HttpErrorResponse } from '@angular/common/http';
             mat-raised-button
             color="primary"
             class="submit-button"
-            [disabled]="isSubmitting || loginForm.invalid"
+            [disabled]="isSubmitting() || loginForm.invalid"
             aria-label="Войти в систему"
           >
-            @if (isSubmitting) {
+            @if (isSubmitting()) {
               <mat-spinner diameter="20"></mat-spinner>
             } @else {
               Войти
@@ -142,17 +142,20 @@ export class LoginPageComponent {
     password: ['', [Validators.required]],
   });
 
-  protected isSubmitting = false;
+  protected isSubmitting = signal(false);
+  protected readonly isButtonDisabled = computed(
+    () => this.isSubmitting() || this.loginForm.invalid,
+  );
 
   protected readonly emailControl = this.loginForm.controls.email;
   protected readonly passwordControl = this.loginForm.controls.password;
 
   onSubmit(): void {
-    if (this.loginForm.invalid || this.isSubmitting) {
+    if (this.loginForm.invalid || this.isSubmitting()) {
       return;
     }
 
-    this.isSubmitting = true;
+    this.isSubmitting.set(true);
 
     const credentials = {
       email: this.loginForm.value.email!,
@@ -161,6 +164,7 @@ export class LoginPageComponent {
 
     this.authService.login(credentials).subscribe({
       next: () => {
+        this.isSubmitting.set(false);
         this.snackBar.open('Вход выполнен успешно', 'Закрыть', {
           duration: 3000,
           horizontalPosition: 'center',
@@ -169,8 +173,8 @@ export class LoginPageComponent {
         void this.router.navigate(['/forklifts']);
       },
       error: (error: unknown) => {
-        this.isSubmitting = false;
-        
+        this.isSubmitting.set(false);
+
         if (error instanceof HttpErrorResponse) {
           if (error.status === 401) {
             this.snackBar.open('Неверный email или пароль', 'Закрыть', {
