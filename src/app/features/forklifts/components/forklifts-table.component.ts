@@ -47,7 +47,7 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
         <!-- Код записи -->
         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef class="column-id">
-            Код записи
+            <span class="header-text">Код записи</span>
           </th>
           <td mat-cell *matCellDef="let element" class="column-id">
             {{ element.id }}
@@ -101,7 +101,7 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
         <!-- Грузоподъемность -->
         <ng-container matColumnDef="loadCapacity">
           <th mat-header-cell *matHeaderCellDef class="column-loadCapacity">
-            Грузоподъемность (т) <span class="required">*</span>
+            <span class="header-text">Грузоподъемность (т) <span class="required">*</span></span>
           </th>
         <td mat-cell *matCellDef="let element; let i = index" class="column-loadCapacity">
             @if (isEditing(element.id)) {
@@ -148,7 +148,7 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
         <!-- Время и дата -->
         <ng-container matColumnDef="lastModified">
           <th mat-header-cell *matHeaderCellDef class="column-lastModified">
-            Время и дата
+            <span class="header-text">Время и дата изменения</span>
           </th>
           <td mat-cell *matCellDef="let element" class="column-lastModified">
             {{ formatDate(element.lastModified) }}
@@ -300,8 +300,30 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
       text-overflow: ellipsis;
       white-space: nowrap;
       font-size: 0.8125rem;
+      text-align: center;
     }
 
+    /* контейнер заголовка — разрешаем перенос слов только для заголовков */
+    .forklifts-table th .header-text {
+      display: block;
+      white-space: normal;          /* разрешаем перенос заголовков */
+      overflow-wrap: anywhere;      /* перенос длинных слов при необходимости */
+      word-break: break-word;
+      hyphens: auto;
+      line-height: 1.1;
+      padding: 0.25rem 0.5rem;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    /* Опционально: ограничить заголовок двумя строками (раскомментировать при необходимости) */
+    .forklifts-table th .header-text--clamp {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
     .header-row {
       background-color: var(--md-sys-color-surface-container-high);
       font-weight: 500;
@@ -360,38 +382,38 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
     .data-row.editing {
       background-color: var(--md-sys-color-tertiary-container);
     }
-
+/* calc((100% - (80px + 130px + 82px + 140px + 105px)) * 0.1)*/
     .column-id {
-      width: 100px;
+      width: 88px;
     }
 
     .column-brand {
-      width: 150px;
+      width: calc((100% - (80px + 130px + 82px + 140px + 105px)) * 0.25);
     }
 
     .column-number {
-      width: 150px;
+      width: calc((100% - (80px + 130px + 82px + 140px + 105px)) * 0.25);
     }
 
     .column-loadCapacity {
-      width: 150px;
+      width: 130px;
     }
 
     .column-isActive {
-      width: 100px;
+      width: 82px;
       text-align: center;
     }
 
     .column-lastModified {
-      width: 180px;
+      width: 140px;
     }
 
     .column-lastModifiedBy {
-      width: 150px;
+      width: calc((100% - (80px + 130px + 82px + 140px + 105px)) * 0.5);
     }
 
     .column-actions {
-      width: 250px;
+      width: 105px;
     }
 
     .editing-errors {
