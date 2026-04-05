@@ -1,4 +1,4 @@
-import { Component, inject, input, ChangeDetectionStrategy, computed } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -59,12 +59,12 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
           <th mat-header-cell *matHeaderCellDef class="column-brand">
             Марка <span class="required">*</span>
           </th>
-        <td mat-cell *matCellDef="let element; let i = index" class="column-brand">
+          <td mat-cell *matCellDef="let element" class="column-brand">
             @if (isEditing(element.id)) {
-              @if (getBrandControl(i)) {
+              @if (getBrandControl(element.id)) {
                 <input
                   type="text"
-                  [formControl]="getBrandControl(i)!"
+                  [formControl]="getBrandControl(element.id)!"
                   class="simple-input"
                   placeholder="Марка"
                   [attr.aria-label]="'Марка погрузчика ' + element.id"
@@ -81,12 +81,12 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
           <th mat-header-cell *matHeaderCellDef class="column-number">
             Номер <span class="required">*</span>
           </th>
-        <td mat-cell *matCellDef="let element; let i = index" class="column-number">
+          <td mat-cell *matCellDef="let element" class="column-number">
             @if (isEditing(element.id)) {
-              @if (getNumberControl(i)) {
+              @if (getNumberControl(element.id)) {
                 <input
                   type="text"
-                  [formControl]="getNumberControl(i)!"
+                  [formControl]="getNumberControl(element.id)!"
                   class="simple-input"
                   placeholder="Номер"
                   [attr.aria-label]="'Номер погрузчика ' + element.id"
@@ -103,14 +103,14 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
           <th mat-header-cell *matHeaderCellDef class="column-loadCapacity">
             <span class="header-text">Грузоподъемность (т) <span class="required">*</span></span>
           </th>
-        <td mat-cell *matCellDef="let element; let i = index" class="column-loadCapacity">
+          <td mat-cell *matCellDef="let element" class="column-loadCapacity">
             @if (isEditing(element.id)) {
-              @if (getLoadCapacityControl(i)) {
+              @if (getLoadCapacityControl(element.id)) {
                 <input
                   type="number"
                   min="0"
                   step="0.1"
-                  [formControl]="getLoadCapacityControl(i)!"
+                  [formControl]="getLoadCapacityControl(element.id)!"
                   class="simple-input"
                   placeholder="Грузоподъемность"
                   [attr.aria-label]="'Грузоподъемность погрузчика ' + element.id"
@@ -127,11 +127,11 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
           <th mat-header-cell *matHeaderCellDef class="column-isActive">
             Активен
           </th>
-          <td mat-cell *matCellDef="let element; let i = index" class="column-isActive">
+          <td mat-cell *matCellDef="let element" class="column-isActive">
             @if (isEditing(element.id)) {
-              @if (getIsActiveControl(i)) {
+              @if (getIsActiveControl(element.id)) {
                 <mat-checkbox
-                  [formControl]="getIsActiveControl(i)!"
+                  [formControl]="getIsActiveControl(element.id)!"
                   [attr.aria-label]="'Активность погрузчика ' + element.id">
                 </mat-checkbox>
               }
@@ -382,7 +382,7 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
     .data-row.editing {
       background-color: var(--md-sys-color-tertiary-container);
     }
-/* calc((100% - (80px + 130px + 82px + 140px + 105px)) * 0.1)*/
+
     .column-id {
       width: 88px;
     }
@@ -477,7 +477,7 @@ export class ForkliftsTableComponent {
   readonly store = inject(ForkliftsStore);
   private readonly fb = inject(FormBuilder);
 
-  readonly forkliftsList = computed(() => this.store.filteredForklifts());
+  readonly forkliftsList = computed(() => this.store.displayForklifts());
   readonly displayedColumns: string[] = [
     'id',
     'brand',
@@ -530,26 +530,27 @@ export class ForkliftsTableComponent {
 
   deleteRow(id: number): void {
     this.store.delete(id).subscribe();
+    this.rowForms.delete(id);
   }
 
   selectForklift(id: number): void {
     this.store.selectForklift(id);
   }
 
-  getBrandControl(index: number): FormControl | null {
-    return this.getOrCreateForm(index).get('brand') as FormControl | null;
+  getBrandControl(id: number): FormControl | null {
+    return this.getOrCreateForm(id).get('brand') as FormControl | null;
   }
 
-  getNumberControl(index: number): FormControl | null {
-    return this.getOrCreateForm(index).get('number') as FormControl | null;
+  getNumberControl(id: number): FormControl | null {
+    return this.getOrCreateForm(id).get('number') as FormControl | null;
   }
 
-  getLoadCapacityControl(index: number): FormControl | null {
-    return this.getOrCreateForm(index).get('loadCapacity') as FormControl | null;
+  getLoadCapacityControl(id: number): FormControl | null {
+    return this.getOrCreateForm(id).get('loadCapacity') as FormControl | null;
   }
 
-  getIsActiveControl(index: number): FormControl | null {
-    return this.getOrCreateForm(index).get('isActive') as FormControl | null;
+  getIsActiveControl(id: number): FormControl | null {
+    return this.getOrCreateForm(id).get('isActive') as FormControl | null;
   }
 
   isFormValid(id: number): boolean {
@@ -557,15 +558,15 @@ export class ForkliftsTableComponent {
     return form ? form.valid : false;
   }
 
-  private getOrCreateForm(index: number): FormGroup {
+  private getOrCreateForm(id: number): FormGroup {
     const forkliftsList = this.forkliftsList();
-    const element = forkliftsList[index];
+    const element = forkliftsList.find((f) => f.id === id);
     
     if (!element) {
       return this.fb.group({});
     }
 
-    let form = this.rowForms.get(element.id);
+    let form = this.rowForms.get(id);
 
     if (!form) {
       const editingForklift = this.store.editingForklift();
@@ -589,7 +590,7 @@ export class ForkliftsTableComponent {
         ],
       });
 
-      this.rowForms.set(element.id, form);
+      this.rowForms.set(id, form);
     }
 
     return form;

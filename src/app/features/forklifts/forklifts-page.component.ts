@@ -290,7 +290,7 @@ export class ForkliftsPageComponent {
   searchNumber = '';
 
   ngOnInit(): void {
-    this.store.loadForklifts().subscribe();
+    this.store.loadForklifts();
   }
 
   applySearch(): void {
