@@ -2,9 +2,7 @@ import { Component, inject, input, ChangeDetectionStrategy, computed } from '@an
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
@@ -25,8 +23,6 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
     MatTableModule,
     MatButtonModule,
     MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
     MatCheckboxModule,
     MatTooltipModule,
     ReactiveFormsModule,
@@ -63,21 +59,16 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
           <th mat-header-cell *matHeaderCellDef class="column-brand">
             Марка <span class="required">*</span>
           </th>
-          <td mat-cell *matCellDef="let element; let i = index" class="column-brand">
+        <td mat-cell *matCellDef="let element; let i = index" class="column-brand">
             @if (isEditing(element.id)) {
               @if (getBrandControl(i)) {
-                <mat-form-field appearance="outline" class="edit-field">
-                  <input
-                    matInput
-                    [formControl]="getBrandControl(i)!"
-                    placeholder="Марка"
-                    required
-                    [attr.aria-label]="'Марка погрузчика ' + element.id"
-                  />
-                  @if (getBrandControl(i)!.hasError('required')) {
-                    <mat-error>Обязательное поле</mat-error>
-                  }
-                </mat-form-field>
+                <input
+                  type="text"
+                  [formControl]="getBrandControl(i)!"
+                  class="simple-input"
+                  placeholder="Марка"
+                  [attr.aria-label]="'Марка погрузчика ' + element.id"
+                />
               }
             } @else {
               {{ element.brand }}
@@ -90,21 +81,16 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
           <th mat-header-cell *matHeaderCellDef class="column-number">
             Номер <span class="required">*</span>
           </th>
-          <td mat-cell *matCellDef="let element; let i = index" class="column-number">
+        <td mat-cell *matCellDef="let element; let i = index" class="column-number">
             @if (isEditing(element.id)) {
               @if (getNumberControl(i)) {
-                <mat-form-field appearance="outline" class="edit-field">
-                  <input
-                    matInput
-                    [formControl]="getNumberControl(i)!"
-                    placeholder="Номер"
-                    required
-                    [attr.aria-label]="'Номер погрузчика ' + element.id"
-                  />
-                  @if (getNumberControl(i)!.hasError('required')) {
-                    <mat-error>Обязательное поле</mat-error>
-                  }
-                </mat-form-field>
+                <input
+                  type="text"
+                  [formControl]="getNumberControl(i)!"
+                  class="simple-input"
+                  placeholder="Номер"
+                  [attr.aria-label]="'Номер погрузчика ' + element.id"
+                />
               }
             } @else {
               {{ element.number }}
@@ -117,27 +103,18 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
           <th mat-header-cell *matHeaderCellDef class="column-loadCapacity">
             Грузоподъемность (т) <span class="required">*</span>
           </th>
-          <td mat-cell *matCellDef="let element; let i = index" class="column-loadCapacity">
+        <td mat-cell *matCellDef="let element; let i = index" class="column-loadCapacity">
             @if (isEditing(element.id)) {
               @if (getLoadCapacityControl(i)) {
-                <mat-form-field appearance="outline" class="edit-field">
-                  <input
-                    matInput
-                    type="number"
-                    min="0"
-                    step="0.1"
-                    [formControl]="getLoadCapacityControl(i)!"
-                    placeholder="Грузоподъемность"
-                    required
-                    [attr.aria-label]="'Грузоподъемность погрузчика ' + element.id"
-                  />
-                  @if (getLoadCapacityControl(i)!.hasError('required')) {
-                    <mat-error>Обязательное поле</mat-error>
-                  }
-                  @if (getLoadCapacityControl(i)!.hasError('min')) {
-                    <mat-error>Значение должно быть положительным</mat-error>
-                  }
-                </mat-form-field>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.1"
+                  [formControl]="getLoadCapacityControl(i)!"
+                  class="simple-input"
+                  placeholder="Грузоподъемность"
+                  [attr.aria-label]="'Грузоподъемность погрузчика ' + element.id"
+                />
               }
             } @else {
               {{ element.loadCapacity }}
@@ -155,9 +132,7 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
               @if (getIsActiveControl(i)) {
                 <mat-checkbox
                   [formControl]="getIsActiveControl(i)!"
-                  [attr.aria-label]="'Активность погрузчика ' + element.id"
-                >
-                  Активен
+                  [attr.aria-label]="'Активность погрузчика ' + element.id">
                 </mat-checkbox>
               }
             } @else {
@@ -260,6 +235,14 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
           Нет данных для отображения
         </div>
       }
+
+      @if (editingErrors().length > 0) {
+        <div class="editing-errors" role="alert">
+          @for (error of editingErrors(); track error) {
+            <div class="error-item">{{ error }}</div>
+          }
+        </div>
+      }
     </div>
   `,
   styles: `
@@ -309,17 +292,57 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
     .forklifts-table {
       width: 100%;
       border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    .forklifts-table td, .forklifts-table th {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 0.8125rem;
     }
 
     .header-row {
       background-color: var(--md-sys-color-surface-container-high);
       font-weight: 500;
+      font-size: 0.8125rem;
     }
 
     .data-row {
       cursor: pointer;
       transition: background-color 0.2s ease;
       height: 60px;
+      max-height: 60px;
+      overflow: hidden;
+    }
+
+    .simple-input {
+      width: 100%;
+      height: 2rem;
+      padding: 0.25rem 0.5rem;
+      border: 1px solid var(--md-sys-color-outline);
+      border-radius: 4px;
+      background: var(--md-sys-color-surface);
+      color: var(--md-sys-color-on-surface);
+      font-size: 0.875rem;
+      box-sizing: border-box;
+    }
+
+    .simple-input:focus {
+      outline: 2px solid var(--md-sys-color-primary);
+      border-color: transparent;
+    }
+
+    .simple-input.ng-invalid {
+      border-color: var(--md-sys-color-error);
+    }
+
+    .simple-input.ng-invalid:focus {
+      outline-color: var(--md-sys-color-error);
+    }
+
+    .simple-input::placeholder {
+      color: var(--md-sys-color-on-surface-variant);
     }
 
     .data-row:hover {
@@ -371,18 +394,21 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
       width: 250px;
     }
 
-    .edit-field {
-      width: 100%;
-      margin: 0;
-      font-size: 0.9rem;
+    .editing-errors {
+      margin-top: 1rem;
+      padding: 1rem;
+      background-color: var(--md-sys-color-error-container);
+      border-left: 4px solid var(--md-sys-color-error);
+      color: var(--md-sys-color-on-error-container);
+      border-radius: 4px;
     }
 
-    .edit-field ::ng-deep .mat-mdc-form-field-wrapper {
-      padding-bottom: 0;
+    .editing-errors .error-item {
+      margin-bottom: 0.5rem;
     }
 
-    .edit-field ::ng-deep .mat-mdc-form-field-infix {
-      padding: 0.25rem 0;
+    .editing-errors .error-item:last-child {
+      margin-bottom: 0;
     }
 
     .active-icon {
@@ -561,4 +587,29 @@ export class ForkliftsTableComponent {
     };
     return date.toLocaleDateString('ru-RU', options);
   }
+
+  readonly editingErrors = computed(() => {
+    const errors: string[] = [];
+    const editingId = this.store.editingForkliftId();
+    
+    if (editingId === null) return errors;
+    
+    const form = this.rowForms.get(editingId);
+    if (!form) return errors;
+    
+    if (form.get('brand')?.hasError('required')) {
+      errors.push('Марка: обязательное поле');
+    }
+    if (form.get('number')?.hasError('required')) {
+      errors.push('Номер: обязательное поле');
+    }
+    if (form.get('loadCapacity')?.hasError('required')) {
+      errors.push('Грузоподъемность: обязательное поле');
+    }
+    if (form.get('loadCapacity')?.hasError('min')) {
+      errors.push('Грузоподъемность: значение должно быть положительным');
+    }
+    
+    return errors;
+  });
 }
