@@ -5,5 +5,6 @@ export const environment = {
   apiPaths: {
     users: '/Users',
     forklifts: '/Forklifts',
+    downtimes: '/Downtimes',
   },
 };
