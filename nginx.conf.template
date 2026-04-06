@@ -8,7 +8,7 @@ http {
     server {
         listen ${PORT};
         server_name 0.0.0.0;
-        root /usr/share/nginx/html;
+        root /usr/share/nginx/html/directory-app/browser;
         index index.html;
 
         # Security headers

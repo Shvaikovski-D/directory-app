@@ -27,5 +27,5 @@ EXPOSE 10000
 # Use PORT env var from Render (default to 10000 if not set)
 ENV PORT=10000
 
-# Use PORT env var from Render
-CMD sh -c "envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+# Use PORT env var from Render (only replace ${PORT} variable, not nginx variables like $uri)
+CMD sh -c "envsubst '\$PORT' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
