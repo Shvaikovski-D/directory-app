@@ -21,11 +21,11 @@ COPY --from=build /app/dist /usr/share/nginx/html
 # Copy nginx template
 COPY nginx.conf.template /etc/nginx/nginx.conf.template
 
-# Expose default port
-EXPOSE 80
+# Expose default port (Render will override with PORT env var)
+EXPOSE 10000
 
-# Set default PORT environment variable
-ENV PORT=80
+# Use PORT env var from Render (default to 10000 if not set)
+ENV PORT=10000
 
 # Use PORT env var from Render
 CMD sh -c "envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
