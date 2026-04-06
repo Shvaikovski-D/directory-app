@@ -1,4 +1,4 @@
-import { inject, Injectable, computed } from '@angular/core';
+import { inject, computed } from '@angular/core';
 import {
   signalStore,
   withComputed,
@@ -9,7 +9,7 @@ import {
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { of, pipe } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
-import { ForkliftsService, GetForkliftsParams } from '../../core/services/forklifts.service';
+import { ForkliftsService } from '../../core/services/forklifts.service';
 import type {
   CreateForkliftCommand,
   ForkliftItemDto,
@@ -43,24 +43,8 @@ export const ForkliftsStore = signalStore(
   withState(initialState),
   withComputed(
     ({ forklifts, searchNumber, editingForkliftId, editingForklift }) => ({
-      filteredForklifts: computed(() => {
-        const search = searchNumber().toLowerCase().trim();
-        if (!search) {
-          return forklifts();
-        }
-        return forklifts().filter((f) => f.number.toLowerCase().includes(search));
-      }),
       isEditing: computed(() => editingForkliftId() !== null),
       displayForklifts: computed(() => {
-        const search = searchNumber().toLowerCase().trim();
-        let filtered: ForkliftItemDto[];
-        
-        if (!search) {
-          filtered = forklifts();
-        } else {
-          filtered = forklifts().filter((f) => f.number.toLowerCase().includes(search));
-        }
-        
         const editingId = editingForkliftId();
         
         // Если создается новая запись (id = -1), добавляем её к списку
@@ -75,10 +59,10 @@ export const ForkliftsStore = signalStore(
             lastModifiedBy: '',
           };
           // Добавляем новую запись в начало списка
-          return [newRecord, ...filtered];
+          return [newRecord, ...forklifts()];
         }
         
-        return filtered;
+        return forklifts();
       }),
     }),
   ),
@@ -88,7 +72,7 @@ export const ForkliftsStore = signalStore(
       const loadForklifts = rxMethod<void>(
         pipe(
           tap(() => patchState(store, { loading: true, error: null })),
-          switchMap((val) =>
+          switchMap(() =>
             forkliftsService.getAll({searchNumber: store.searchNumber(), page: 1, perPage: 1000}).pipe(
               tap((result) => {
                 patchState(store, { forklifts: result.items, loading: false });
