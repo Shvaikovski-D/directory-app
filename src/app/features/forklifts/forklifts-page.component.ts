@@ -4,8 +4,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { ForkliftsTableComponent } from './components/forklifts-table.component';
 import { DowntimesSidebarComponent } from './components/downtimes-sidebar.component';
+import { DowntimeFormDialogComponent } from './components/downtime-form-dialog.component';
 import { ForkliftsStore } from './forklifts.store';
 
 @Component({
@@ -93,6 +95,8 @@ import { ForkliftsStore } from './forklifts.store';
             <button
               mat-button
               class="add-downtime-button"
+              (click)="addDowntime()"
+              [disabled]="!store.selectedForkliftId()"
               [attr.aria-label]="'Добавить новый простой'"
             >
               Добавить
@@ -286,24 +290,45 @@ import { ForkliftsStore } from './forklifts.store';
 })
 export class ForkliftsPageComponent {
   readonly store = inject(ForkliftsStore);
+  readonly dialog = inject(MatDialog);
 
   searchNumber = '';
 
   ngOnInit(): void {
-    this.store.loadForklifts();
+    this.store['loadForklifts']();
   }
 
   applySearch(): void {
-    this.store.searchByNumber(this.searchNumber);
+    this.store['searchByNumber'](this.searchNumber);
   }
 
   resetFilter(): void {
     this.searchNumber = '';
-    this.store.resetFilter();
+    this.store['resetFilter']();
   }
 
   addForklift(): void {
-    this.store.startAdding();
+    this.store['startAdding']();
+  }
+
+  addDowntime(): void {
+    const forkliftId = this.store.selectedForkliftId();
+    if (!forkliftId) {
+      return;
+    }
+
+    const dialogRef = this.dialog.open(DowntimeFormDialogComponent, {
+      data: {
+        mode: 'create',
+        forkliftId,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.store['createDowntime'](result);
+      }
+    });
   }
 
   selectedForkliftNumber(): string {

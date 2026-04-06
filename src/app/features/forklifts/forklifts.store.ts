@@ -290,6 +290,88 @@ export const ForkliftsStore = signalStore(
         clearDowntimesError: () => {
           patchState(store, { downtimesError: null });
         },
+
+        createDowntime: (command: any) => {
+          patchState(store, { downtimesLoading: true, downtimesError: null });
+          downtimesService.create(command).subscribe({
+            next: () => {
+              // Перезагружаем простои после создания
+              const selectedForkliftId = store.selectedForkliftId();
+              if (selectedForkliftId !== null) {
+                downtimesService.getByForkliftId(selectedForkliftId).subscribe({
+                  next: (downtimes) => {
+                    patchState(store, {
+                      downtimes,
+                      downtimesLoading: false,
+                    });
+                  },
+                });
+              }
+            },
+            error: (error) => {
+              patchState(store, {
+                downtimesError: 'Ошибка создания простоя',
+                downtimesLoading: false,
+              });
+            },
+          });
+        },
+
+        updateDowntime: (command: any) => {
+          patchState(store, { downtimesLoading: true, downtimesError: null });
+          downtimesService.update(command.id, command).subscribe({
+            next: () => {
+              // Перезагружаем простои после обновления
+              const selectedForkliftId = store.selectedForkliftId();
+              if (selectedForkliftId !== null) {
+                downtimesService.getByForkliftId(selectedForkliftId).subscribe({
+                  next: (downtimes) => {
+                    patchState(store, {
+                      downtimes,
+                      downtimesLoading: false,
+                    });
+                  },
+                });
+              }
+            },
+            error: (error) => {
+              patchState(store, {
+                downtimesError: 'Ошибка обновления простоя',
+                downtimesLoading: false,
+              });
+            },
+          });
+        },
+
+        deleteDowntime: (id: number) => {
+          const dialogRef = dialog.open(ConfirmDialogComponent, {
+            data: {
+              title: 'Удаление простоя',
+              message: 'Удалить информацию о простое? Вы уверены?',
+            },
+          });
+
+          return dialogRef.afterClosed().subscribe((confirmed) => {
+            if (confirmed) {
+              patchState(store, { downtimesLoading: true, downtimesError: null });
+              downtimesService.delete(id).subscribe({
+                next: () => {
+                  // Удаляем из списка или перезагружаем
+                  patchState(store, (state) => ({
+                    downtimes: state.downtimes.filter((d) => d.id !== id),
+                    downtimesLoading: false,
+                  }));
+                },
+                error: (error) => {
+                  patchState(store, {
+                    downtimesError: 'Ошибка удаления простоя',
+                    downtimesLoading: false,
+                  });
+                },
+              });
+            }
+          });
+        },
       };
     },
   ),
@@ -297,11 +379,11 @@ export const ForkliftsStore = signalStore(
     onInit: (store) => {
       // Автоматически загружаем простои при выборе погрузчика
       effect(() => {
-        const selectedForkliftId = store.selectedForkliftId();
+        const selectedForkliftId = store['selectedForkliftId']();
         if (selectedForkliftId !== null) {
-          store.loadDowntimes(selectedForkliftId);
+          store['loadDowntimes'](selectedForkliftId);
         } else {
-          store.clearDowntimes();
+          store['clearDowntimes']();
         }
       });
     },

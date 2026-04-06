@@ -5,11 +5,13 @@ import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { ForkliftsStore } from '../forklifts.store';
 import { FormatDatePipe } from '../../../shared/pipes/format-date.pipe';
 import { calculateDowntimeDuration } from '../../../utils/downtime.utils';
 import type { DowntimeItemDto } from '../../../core/models/downtimes.models';
+import { DowntimeFormDialogComponent } from './downtime-form-dialog.component';
 
 @Component({
   selector: 'app-downtimes-sidebar',
@@ -102,7 +104,7 @@ import type { DowntimeItemDto } from '../../../core/models/downtimes.models';
                 <td mat-cell *matCellDef="let element" class="column-actions">
                   <button
                     mat-button
-                    [disabled]="true"
+                    (click)="onEditDowntime(element)"
                     [attr.aria-label]="'Редактировать простой ' + element.id"
                     matTooltip="Редактировать"
                   >
@@ -111,7 +113,7 @@ import type { DowntimeItemDto } from '../../../core/models/downtimes.models';
                   <button
                     mat-button
                     color="warn"
-                    [disabled]="true"
+                    (click)="onDeleteDowntime(element.id)"
                     [attr.aria-label]="'Удалить простой ' + element.id"
                     matTooltip="Удалить"
                   >
@@ -280,6 +282,7 @@ import type { DowntimeItemDto } from '../../../core/models/downtimes.models';
 })
 export class DowntimesSidebarComponent {
   readonly store = inject(ForkliftsStore);
+  readonly dialog = inject(MatDialog);
 
   readonly forklifts = computed(() => this.store.forklifts());
   readonly downtimes = computed(() => this.store.downtimes());
@@ -303,4 +306,24 @@ export class DowntimesSidebarComponent {
   ];
 
   readonly calculateDowntimeDuration = calculateDowntimeDuration;
+
+  onEditDowntime(downtime: DowntimeItemDto): void {
+    const dialogRef = this.dialog.open(DowntimeFormDialogComponent, {
+      data: {
+        mode: 'edit',
+        forkliftId: downtime.forkliftId,
+        downtime,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.store['updateDowntime'](result);
+      }
+    });
+  }
+
+  onDeleteDowntime(id: number): void {
+    this.store['deleteDowntime'](id);
+  }
 }
