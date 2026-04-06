@@ -1,20 +1,23 @@
-import { inject, computed } from '@angular/core';
+import { inject, computed, effect } from '@angular/core';
 import {
   signalStore,
   withComputed,
   withMethods,
   withState,
   patchState,
+  withHooks,
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { of, pipe } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { ForkliftsService } from '../../core/services/forklifts.service';
+import { DowntimesService } from '../../core/services/downtimes.service';
 import type {
   CreateForkliftCommand,
   ForkliftItemDto,
   UpdateForkliftCommand,
 } from '../../core/models/forklifts.models';
+import type { DowntimeItemDto } from '../../core/models/downtimes.models';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 
@@ -26,6 +29,9 @@ interface ForkliftsState {
   selectedForkliftId: number | null;
   loading: boolean;
   error: string | null;
+  downtimes: DowntimeItemDto[];
+  downtimesLoading: boolean;
+  downtimesError: string | null;
 }
 
 const initialState: ForkliftsState = {
@@ -36,6 +42,9 @@ const initialState: ForkliftsState = {
   selectedForkliftId: null,
   loading: false,
   error: null,
+  downtimes: [],
+  downtimesLoading: false,
+  downtimesError: null,
 };
 
 export const ForkliftsStore = signalStore(
@@ -46,7 +55,7 @@ export const ForkliftsStore = signalStore(
       isEditing: computed(() => editingForkliftId() !== null),
       displayForklifts: computed(() => {
         const editingId = editingForkliftId();
-        
+
         // Если создается новая запись (id = -1), добавляем её к списку
         if (editingId === -1 && editingForklift()) {
           const newRecord: ForkliftItemDto = {
@@ -61,27 +70,34 @@ export const ForkliftsStore = signalStore(
           // Добавляем новую запись в начало списка
           return [newRecord, ...forklifts()];
         }
-        
+
         return forklifts();
       }),
     }),
   ),
   withMethods(
-    (store, forkliftsService = inject(ForkliftsService), dialog = inject(MatDialog)) => {
+    (
+      store,
+      forkliftsService = inject(ForkliftsService),
+      downtimesService = inject(DowntimesService),
+      dialog = inject(MatDialog),
+    ) => {
       // Внутренняя функция для загрузки данных (переиспользуется)
       const loadForklifts = rxMethod<void>(
         pipe(
           tap(() => patchState(store, { loading: true, error: null })),
           switchMap(() =>
-            forkliftsService.getAll({searchNumber: store.searchNumber(), page: 1, perPage: 1000}).pipe(
-              tap((result) => {
-                patchState(store, { forklifts: result.items, loading: false });
-              }),
-              catchError((error) => {
-                patchState(store, { error: 'Ошибка загрузки данных', loading: false });
-                return of(null);
-              }),
-            ),
+            forkliftsService
+              .getAll({ searchNumber: store.searchNumber(), page: 1, perPage: 1000 })
+              .pipe(
+                tap((result) => {
+                  patchState(store, { forklifts: result.items, loading: false });
+                }),
+                catchError((error) => {
+                  patchState(store, { error: 'Ошибка загрузки данных', loading: false });
+                  return of(null);
+                }),
+              ),
           ),
         ),
       );
@@ -93,7 +109,7 @@ export const ForkliftsStore = signalStore(
           patchState(store, (state) => ({
             searchNumber: number,
             editingForkliftId: null,
-            editingForklift: {}
+            editingForklift: {},
           }));
           loadForklifts();
         },
@@ -245,6 +261,49 @@ export const ForkliftsStore = signalStore(
         clearError: () => {
           patchState(store, { error: null });
         },
+
+        loadDowntimes: (forkliftId: number) => {
+          patchState(store, { downtimesLoading: true, downtimesError: null });
+          downtimesService.getByForkliftId(forkliftId).subscribe({
+            next: (downtimes) => {
+              patchState(store, {
+                downtimes,
+                downtimesLoading: false,
+              });
+            },
+            error: () => {
+              patchState(store, {
+                downtimesError: 'Ошибка загрузки простоев',
+                downtimesLoading: false,
+              });
+            },
+          });
+        },
+
+        clearDowntimes: () => {
+          patchState(store, {
+            downtimes: [],
+            downtimesError: null,
+          });
+        },
+
+        clearDowntimesError: () => {
+          patchState(store, { downtimesError: null });
+        },
       };
-    })
+    },
+  ),
+  withHooks({
+    onInit: (store) => {
+      // Автоматически загружаем простои при выборе погрузчика
+      effect(() => {
+        const selectedForkliftId = store.selectedForkliftId();
+        if (selectedForkliftId !== null) {
+          store.loadDowntimes(selectedForkliftId);
+        } else {
+          store.clearDowntimes();
+        }
+      });
+    },
+  }),
 );

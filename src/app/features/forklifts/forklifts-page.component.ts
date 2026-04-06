@@ -153,7 +153,7 @@ import { ForkliftsStore } from './forklifts.store';
 
     .sections-container {
       display: flex;
-      gap: 1.5rem;
+      gap: 0.5rem;
       align-items: flex-start;
     }
 
@@ -167,11 +167,11 @@ import { ForkliftsStore } from './forklifts.store';
     }
 
     .section-forklifts {
-      flex: 2;
+      flex: 10;
     }
 
     .section-downtimes {
-      flex: 1;
+      flex: 7;
     }
 
     .section-header {

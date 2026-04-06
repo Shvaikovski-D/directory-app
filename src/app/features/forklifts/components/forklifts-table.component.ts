@@ -304,7 +304,7 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      font-size: 0.8125rem;
+      font-size: 0.75rem;
       text-align: center;
     }
 
@@ -332,7 +332,7 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
     .header-row {
       background-color: var(--md-sys-color-surface-container-high);
       font-weight: 500;
-      font-size: 0.8125rem;
+      font-size: 0.75rem;
     }
 
     .data-row {
@@ -393,11 +393,11 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
     }
 
     .column-brand {
-      width: calc((100% - (80px + 130px + 82px + 140px + 112px)) * 0.25);
+      width: calc((100% - (80px + 130px + 86px + 140px + 112px)) * 0.25);
     }
 
     .column-number {
-      width: calc((100% - (80px + 130px + 82px + 140px + 112px)) * 0.25);
+      width: calc((100% - (80px + 130px + 86px + 140px + 112px)) * 0.25);
     }
 
     .column-loadCapacity {
@@ -405,7 +405,7 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
     }
 
     .column-isActive {
-      width: 82px;
+      width: 86px;
       text-align: center;
     }
 
@@ -414,7 +414,7 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
     }
 
     .column-lastModifiedBy {
-      width: calc((100% - (80px + 130px + 82px + 140px + 112px)) * 0.5);
+      width: calc((100% - (80px + 130px + 86px + 140px + 112px)) * 0.5);
     }
 
     .column-actions {
