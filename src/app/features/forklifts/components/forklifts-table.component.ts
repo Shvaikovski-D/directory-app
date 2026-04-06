@@ -137,9 +137,9 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
               }
             } @else {
               @if (element.isActive) {
-                <mat-icon class="active-icon">check</mat-icon>
+                <mat-icon class="active-icon" style="color: cornflowerblue">check</mat-icon>
               } @else {
-                <mat-icon class="inactive-icon">cancel</mat-icon>
+                <mat-icon class="inactive-icon">close</mat-icon>
               }
             }
           </td>
@@ -179,7 +179,7 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
                 [attr.aria-label]="'Сохранить погрузчик ' + element.id"
                 matTooltip="Сохранить"
               >
-                <mat-icon>save</mat-icon>
+                <mat-icon style="color: grey; font-weight: bolder;">check</mat-icon>
               </button>
               <button
                 mat-button
@@ -187,7 +187,7 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
                 [attr.aria-label]="'Отменить редактирование погрузчика ' + element.id"
                 matTooltip="Отменить"
               >
-                <mat-icon>close</mat-icon>
+                <mat-icon style="color: grey; font-weight: bolder;">close</mat-icon>
               </button>
             } @else {
               <button
@@ -196,7 +196,7 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
                 [attr.aria-label]="'Изменить погрузчик ' + element.id"
                 matTooltip="Изменить"
               >
-                <mat-icon>edit</mat-icon>
+                <mat-icon style="color: grey; font-weight: bolder;">edit</mat-icon>
               </button>
               <button
                 mat-button
@@ -205,9 +205,10 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
                 [attr.aria-label]="'Удалить погрузчик ' + element.id"
                 matTooltip="Удалить"
               >
-                <mat-icon>clear</mat-icon>
+                <mat-icon style="color: grey; font-weight: bolder;">clear</mat-icon>
               </button>
             }
+
           </td>
         </ng-container>
 
@@ -293,6 +294,10 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
       width: 100%;
       border-collapse: collapse;
       table-layout: fixed;
+
+      th {
+        font-weight: 600;
+      }
     }
 
     .forklifts-table td, .forklifts-table th {
@@ -388,11 +393,11 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
     }
 
     .column-brand {
-      width: calc((100% - (80px + 130px + 82px + 140px + 105px)) * 0.25);
+      width: calc((100% - (80px + 130px + 82px + 140px + 112px)) * 0.25);
     }
 
     .column-number {
-      width: calc((100% - (80px + 130px + 82px + 140px + 105px)) * 0.25);
+      width: calc((100% - (80px + 130px + 82px + 140px + 112px)) * 0.25);
     }
 
     .column-loadCapacity {
@@ -409,11 +414,11 @@ import type { ForkliftItemDto } from '../../../core/models/forklifts.models';
     }
 
     .column-lastModifiedBy {
-      width: calc((100% - (80px + 130px + 82px + 140px + 105px)) * 0.5);
+      width: calc((100% - (80px + 130px + 82px + 140px + 112px)) * 0.5);
     }
 
     .column-actions {
-      width: 105px;
+      width: 112px;
     }
 
     .editing-errors {

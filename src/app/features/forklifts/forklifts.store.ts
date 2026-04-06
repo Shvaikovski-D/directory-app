@@ -90,11 +90,17 @@ export const ForkliftsStore = signalStore(
         loadForklifts,
 
         searchByNumber: (number: string) => {
-          patchState(store, { searchNumber: number });
+          patchState(store, (state) => ({
+            searchNumber: number,
+            editingForkliftId: null,
+            editingForklift: {}
+          }));
+          loadForklifts();
         },
 
         resetFilter: () => {
           patchState(store, { searchNumber: '' });
+          loadForklifts();
         },
 
         startEditing: (id: number) => {
@@ -150,6 +156,7 @@ export const ForkliftsStore = signalStore(
               ? forkliftsService.create(command)
               : forkliftsService.update(editingId, {
                   ...command,
+                  id: editingId,
                   isActive: editingForklift.isActive ?? true,
                 } as UpdateForkliftCommand);
 
