@@ -6,7 +6,7 @@ import {
   HttpRequest,
 } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { catchError, throwError } from 'rxjs';
+import { catchError, tap, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 
 export const authInterceptor: HttpInterceptorFn = (
@@ -17,7 +17,9 @@ export const authInterceptor: HttpInterceptorFn = (
   const router = inject(Router);
 
   // Не добавляем токен для запросов на логин и logout
-  const isAuthRequest = req.url.includes('/login') || req.url.includes('/logout');
+  const isAuthRequest = req.url.includes('/login')
+    || req.url.includes('/logout')
+    || req.url.includes('/refresh');
 
   const token = authService.accessToken();
   const authReq = isAuthRequest

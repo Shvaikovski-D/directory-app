@@ -39,6 +39,25 @@ export class AuthService {
     );
   }
 
+  refreshToken(): Observable<AccessTokenResponse> {
+    const refreshToken = this.getRefreshToken();
+
+    if (!refreshToken) {
+      this.clearAuthData();
+      this.router.navigate(['/login']);
+      return throwError(() => new Error('No refresh token available'));
+    }
+
+    return this.usersService.refresh({ refreshToken }).pipe(
+      tap(response => this.handleSuccessfulLogin(response)),
+      catchError(error => {
+        this.clearAuthData();
+        this.router.navigate(['/login']);
+        return throwError(() => error);
+      }),
+    );
+  }
+
   private handleSuccessfulLogin(response: AccessTokenResponse): void {
     sessionStorage.setItem(TOKEN_KEY, response.accessToken);
     sessionStorage.setItem(REFRESH_TOKEN_KEY, response.refreshToken);
