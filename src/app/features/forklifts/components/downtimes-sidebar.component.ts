@@ -318,7 +318,7 @@ export class DowntimesSidebarComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.store['updateDowntime'](result);
+        this.store.updateDowntime(result);
       }
     });
   }

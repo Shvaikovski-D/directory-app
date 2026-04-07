@@ -17,7 +17,7 @@ import type {
   ForkliftItemDto,
   UpdateForkliftCommand,
 } from '../../core/models/forklifts.models';
-import type { DowntimeItemDto } from '../../core/models/downtimes.models';
+import type { DowntimeItemDto, UpdateDowntimeCommand } from '../../core/models/downtimes.models';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 
@@ -317,7 +317,7 @@ export const ForkliftsStore = signalStore(
           });
         },
 
-        updateDowntime: (command: any) => {
+        updateDowntime: (command: UpdateDowntimeCommand) => {
           patchState(store, { downtimesLoading: true, downtimesError: null });
           downtimesService.update(command.id, command).subscribe({
             next: () => {
