@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, catchError, tap, throwError } from 'rxjs';
+import { Observable, catchError, of, tap, throwError } from 'rxjs';
 import { UsersService } from './users.service';
 import { AccessTokenResponse, LoginRequest } from '../models/users.models';
 
@@ -16,6 +16,10 @@ export class AuthService {
 
   readonly accessToken = signal<string | null>(this.getStoredToken());
   readonly isAuthenticatedSignal = computed(() => this.accessToken() !== null);
+
+  // Сигналы для управления обновлением токена
+  private readonly isRefreshing = signal(false);
+  private readonly refreshTokenSubject = signal<string | null>(null);
 
   login(credentials: LoginRequest): Observable<AccessTokenResponse> {
     return this.usersService.login(credentials).pipe(
@@ -40,22 +44,61 @@ export class AuthService {
   }
 
   refreshToken(): Observable<AccessTokenResponse> {
-    const refreshToken = this.getRefreshToken();
+    const currentRefreshToken = this.getRefreshToken();
 
-    if (!refreshToken) {
+    // Если нет refresh токена - очищаем и редиректим
+    if (!currentRefreshToken) {
       this.clearAuthData();
       this.router.navigate(['/login']);
       return throwError(() => new Error('No refresh token available'));
     }
 
-    return this.usersService.refresh({ refreshToken }).pipe(
-      tap(response => this.handleSuccessfulLogin(response)),
+    // Если уже обновляем - возвращаем текущий новый токен или ошибку
+    if (this.isRefreshing()) {
+      const newToken = this.refreshTokenSubject();
+      if (newToken) {
+        // Если новый токен уже получен - возвращаем его
+        return of({
+          accessToken: newToken,
+          refreshToken: currentRefreshToken, // Используем текущий refresh token
+          expiresIn: 0, // Не важно, так как токен уже получен
+        });
+      }
+      // Если обновление в процессе, но токен ещё не получен
+      return throwError(() => new Error('Refresh in progress'));
+    }
+
+    // Начинаем обновление
+    this.isRefreshing.set(true);
+    this.refreshTokenSubject.set(null);
+
+    return this.usersService.refresh({ refreshToken: currentRefreshToken }).pipe(
+      tap(response => {
+        this.handleSuccessfulLogin(response);
+        this.refreshTokenSubject.set(response.accessToken);
+      }),
       catchError(error => {
         this.clearAuthData();
         this.router.navigate(['/login']);
+        this.refreshTokenSubject.set(null);
         return throwError(() => error);
       }),
+      // Сбрасываем флаг обновления (успех или ошибка)
+      tap({
+        finalize: () => {
+          this.isRefreshing.set(false);
+        },
+      }),
     );
+  }
+
+  // Геттеры для interceptor
+  getIsRefreshing(): boolean {
+    return this.isRefreshing();
+  }
+
+  getRefreshTokenSubject(): string | null {
+    return this.refreshTokenSubject();
   }
 
   private handleSuccessfulLogin(response: AccessTokenResponse): void {
