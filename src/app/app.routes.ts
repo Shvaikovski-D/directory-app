@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+﻿import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
@@ -16,6 +16,16 @@ export const routes: Routes = [
         path: 'forklifts',
         loadComponent: () => import('./features/forklifts/forklifts-page.component').then(m => m.ForkliftsPageComponent),
         title: 'Справочник погрузчиков',
+      },
+      {
+        path: 'test-task',
+        loadComponent: () => import('./features/test-task/test-task-page.component').then(m => m.TestTaskPageComponent),
+        title: 'Test Task',
+      },
+      {
+        path: 'diag/ping',
+        loadComponent: () => import('./features/diagnostics/ping-page.component').then(m => m.PingPageComponent),
+        title: 'Ping',
       },
       {
         path: '',

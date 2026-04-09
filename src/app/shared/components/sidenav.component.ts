@@ -102,5 +102,6 @@ export class SidenavComponent {
     { label: 'Справочник погрузчиков', route: '/forklifts' },
     { label: 'Резервное копирование и восстановление', route: '/backup' },
     { label: 'Справочники', route: '/directories' },
+    { label: 'Test Task', route: '/test-task' },
   ];
 }

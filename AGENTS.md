@@ -1,84 +1,88 @@
+You are an expert in TypeScript, Angular, and scalable web application development.
 
-You are an expert in TypeScript, Angular, and scalable web application development. You write functional, maintainable, performant, and accessible code following Angular and TypeScript best practices.
+# Commands
 
-## TypeScript Best Practices
+- `npm start` / `ng serve` — dev server on localhost:4200
+- `ng test` — unit tests (Vitest via @angular/build:unit-test, jsdom environment)
+- `ng build` — production build (no lint/typecheck script exists — run manually)
 
-- Use strict type checking
-- Prefer type inference when the type is obvious
-- Avoid the `any` type; use `unknown` when type is uncertain
+# Architecture
 
-## Angular Best Practices
+Angular 21 single-app workspace. Zoneless change detection enabled via `provideZonelessChangeDetection()`.
 
-- Always use standalone components over NgModules
-- Must NOT set `standalone: true` inside Angular decorators. It's the default in Angular v20+.
-- Use signals for state management
-- Implement lazy loading for feature routes
-- Do NOT use the `@HostBinding` and `@HostListener` decorators. Put host bindings inside the `host` object of the `@Component` or `@Directive` decorator instead
-- Use `NgOptimizedImage` for all static images.
-  - `NgOptimizedImage` does not work for inline base64 images.
+## Directory Structure
 
-## Accessibility Requirements
+```
+src/app/
+  app.ts / app.routes.ts / app.config.ts   — app root, centralized routes, DI config
+  core/
+    guards/     — authGuard (CanActivateFn, redirects to /login)
+    handlers/   — GlobalErrorHandler (shows MatSnackBar on errors)
+    interceptors/ — auth interceptor (JWT Bearer token, 401 refresh, 403 redirect)
+    models/     — shared DTOs and command interfaces
+    services/   — HttpService (base HTTP wrapper), AuthService, UsersService, ForkliftsService, DowntimesService
+    theme/      — Material Design 3 theme (material-theme.scss, theme tokens)
+  features/
+    auth/        — LoginPageComponent (Reactive form)
+    forklifts/   — ForkliftsPageComponent + forklifts.store.ts + components/
+    diagnostics/ — PingPageComponent + ping.store.ts
+  shared/
+    components/  — MainLayout, MainHeader, Sidenav, ConfirmDialog
+    pipes/      — FormatDate pipe (DD.MM.YYYY HH:mm, ru-RU locale)
+  utils/       — date.utils.ts, downtime.utils.ts
+  environments/ — environment.ts / environment.prod.ts (apiUrl, apiPaths)
+```
 
-- It MUST pass all AXE checks.
-- It MUST follow all WCAG AA minimums, including focus management, color contrast, and ARIA attributes.
+## Routing
 
-### Components
+All feature routes use `loadComponent()` for standalone lazy loading. Protected routes go through `authGuard`.
+/login (public) ? /forklifts (default, protected) ? /diag/ping (protected). Parent layout: MainLayoutComponent.
 
-- Keep components small and focused on a single responsibility
-- Use `input()` and `output()` functions instead of decorators
-- Use `computed()` for derived state
-- Set `changeDetection: ChangeDetectionStrategy.OnPush` in `@Component` decorator
-- Prefer inline templates for small components
-- Prefer Reactive forms instead of Template-driven ones
-- Do NOT use `ngClass`, use `class` bindings instead
-- Do NOT use `ngStyle`, use `style` bindings instead
-- When using external templates/styles, use paths relative to the component TS file.
+## Feature Pattern (forklifts — canonical)
 
-## State Management
+- Page component injects the store, delegates UI to child components in `components/` subfolder.
+- Store uses `signalStore()` from `@ngrx/signals` with: `withState`, `withComputed`, `withMethods`, `withHooks`.
+- Methods use `patchState()` for state mutations (never `mutate`). Async operations use `rxMethod()` with `switchMap`.
+- Services inject other services inside `withMethods` via `inject()`.
+- Computed values use Angular `computed()` inside `withComputed()`.
+- Hooks use `effect()` inside `withHooks({ onInit })` for auto-reactions.
 
-- Use signals for local component state
-- Use `computed()` for derived state
-- Keep state transformations pure and predictable
-- Do NOT use `mutate` on signals, use `update` or `set` instead
+## API Layer
 
-## Templates
+- `HttpService` wraps `HttpClient` with `environment.apiUrl` as base URL. All feature services delegate to it.
+- API paths come from `environment.apiPaths` (e.g., `/Forklifts`, `/Downtimes`, `/Users`).
 
-- Keep templates simple and avoid complex logic
-- Use native control flow (`@if`, `@for`, `@switch`) instead of `*ngIf`, `*ngFor`, `*ngSwitch`
-- Use the async pipe to handle observables
-- Do not assume globals like (`new Date()`) are available.
+# Style & Formatting
 
-## Services
+- Prettier: single quotes, 100 char print width, Angular parser for HTML.
+- Component selector prefix: `app`.
+- Styles: SCSS (inline). Use Material Design 3 CSS custom properties (`--md-sys-color-*`).
 
-- Design services around a single responsibility
-- Use the `providedIn: 'root'` option for singleton services
-- Use the `inject()` function instead of constructor injection
+# Conventions
 
-# The main technology stack:
-  * Angular 21
-  * Angular Material
-  * Lazy routes
-  * Zoneless change detection
-  * @if / @for / @defer
-  * Standalone components
-  * Signals, SignalStore
+- Do NOT set `standalone: true` — it is the default in Angular 21+.
+- Use `input()` / `output()` functions, NOT decorators.
+- Use `inject()` for DI, NOT constructor injection.
+- Use native control flow (`@if`, `@for`, `@switch`), NOT structural directives.
+- Do NOT use `ngClass`/`ngStyle` — use `[class.]` and `[style.]` bindings.
+- Host bindings go in the `host` object of `@Component`/`@Directive`, NOT `@HostBinding`/`@HostListener`.
+- Do NOT use `mutate` on signals — use `update` or `set`.
+- Always set `changeDetection: ChangeDetectionStrategy.OnPush` on components.
+- Prefer Reactive forms over Template-driven forms.
+- Use `NgOptimizedImage` for static images (not for inline base64).
+- Must pass AXE checks and WCAG AA minimums (focus management, color contrast, ARIA attributes).
+- External template/style paths must be relative to the component TS file.
+- Do not assume globals like `new Date()` are available in templates.
 
-===============================================================================
+# Environment Config
 
+`src/environments/environment.ts` and `environment.prod.ts`. Build swaps via `fileReplacements` in angular.json.
+Production API: `environment.apiUrl`. Local override note: `__apiUrl` (underscored, unused by build).
 
-### Key Technologies & Architecture
+# Docker
 
-*   **Framework**: [Angular](https://angular.dev/)
-*   **Language**: [TypeScript](https://www.typescriptlang.org/)
-*   **UI Components**: [Angular Material](https://material.angular.io/)
-*   **State Management**: [@ngrx/signals](https://ngrx.io/guide/signals) for reactive, signal-based state management.
-*   **Styling**: SCSS, with a global theme defined in `src/app/core/theme/`.
-*   **Architecture**: The project follows a **feature-sliced design**. located in `src/app/features/`. These features are lazy-loaded via the router for better performance.
-*   **Code Quality**: The project is configured with **ESLint** for linting and **Prettier** for consistent code formatting.
-
-## 3. Development Conventions
-*   **State Management**: Business logic and application state are managed within dedicated stores using `@ngrx/signals`. Each feature module typically has its own store. These stores encapsulate state, computed values (derivations of state), and methods (actions that modify state).
-*   **Component Structure**: Components should be lean. Complex logic should reside in services or state stores, which are then injected into components.
-*   **Routing**: The application uses a centralized routing configuration (`src/app/app.routes.ts`) that lazy-loads feature-specific routes from their respective modules. An `authGuard` protects the main application routes.
-*   **API Interaction**: API calls are handled by dedicated services. These services are typically injected into state stores to fetch or push data.
-*   **Styling**: Adhere to the existing SCSS structure. Global styles are in `src/styles.scss`, and component-specific styles are co-located with their components. Use Angular Material components wherever possible to maintain a consistent look and feel.
+```bash
+docker build -t directory-app .
+docker run -d --name directory-app -p 10000:10000 directory-app
+```
+Serves on port 10000 via nginx. Health check at `/health`.
